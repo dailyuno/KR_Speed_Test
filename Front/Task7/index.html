@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="fontawesome/css/all.css">
+    <style>
+        * {
+            font-family: Calibri;
+        }
+
+        .video-container {
+            width: 50%;
+            position: relative;
+        }
+
+        .video-container.large {
+            width: 100%;
+        }
+
+        .video-container .video-filename {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 6px 15px;
+            background-color: #fff;
+            font-size: 12px;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-bottom {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .video-timeline {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .video-timeline input {
+            width: 100%;
+        }
+
+        .video-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .video-controls i {
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .main-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: #fff;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .video-container.play .video-bottom {
+            display: none;
+        }
+
+        .video-container.play:hover .video-bottom {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <template v-for="video in videos">
+        <video-container :video="video"></video-container>
+    </template>
+</div>
+
+<script src="vue.min.js"></script>
+<script>
+    Vue.component('video-container', {
+        template: `
+                <div class="video-container" :class="{play: options.play, large: video.large}" ref="container">
+                    <div class="video-filename">{{ filename }}</div>
+                    <i class="fas fa-play main-play" @click="play" v-if="!options.play"></i>
+
+                    <video :src="video.source" ref="video"></video>
+
+                    <div class="video-bottom">
+                        <div class="video-timeline">
+                            <input type="range" min="0" :max="Math.ceil(duration)" @input="moveTime" v-model="timeline">
+                        </div>
+                        <div class="video-controls">
+                            <div class="video-left-control">
+                                <i class="fas fa-pause" @click="pause" v-if="options.play"></i>
+                                <i class="fas fa-play" @click="play" v-else></i>
+                                <i class="fas fa-volume-up" @click="volumeOff" v-if="options.volume"></i>
+                                <i class="fas fa-volume-mute" @click="volumeOn" v-else></i>
+                            </div>
+                            <div class="video-right-control">
+                                <i class="fas fa-compress-arrows-alt" @click="normal" v-if="options.full"></i>
+                                <i class="fas fa-expand-arrows-alt" @click="full" v-else></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+        props: {
+            video: Object
+        },
+        data() {
+            return {
+                duration: 0,
+                timeline: 0,
+                options: {
+                    play: false,
+                    volume: true,
+                    full: false,
+                    timeline: null
+                }
+            }
+        },
+        methods: {
+            play() {
+                this.el.play();
+                this.options.play = true;
+                this.options.timeline = setInterval(_ => {
+                    this.timeline = this.el.currentTime;
+                }, 1000);
+            },
+            pause() {
+                this.el.pause();
+                this.options.play = false;
+                clearInterval(this.options.timeline);
+            },
+            volumeOn() {
+                this.el.volume = 1;
+                this.options.volume = true;
+            },
+            volumeOff() {
+                this.el.volume = 0;
+                this.options.volume = false;
+            },
+            full() {
+                this.$refs.container.requestFullscreen();
+                this.options.full = true;
+            },
+            normal() {
+                document.exitFullscreen();
+                this.options.full = false;
+            },
+            moveTime() {
+                this.el.currentTime = this.timeline;
+            }
+        },
+        computed: {
+            filename() {
+                return this.video.source.substr(this.video.source.lastIndexOf('/') + 1)
+            },
+            el() {
+                return this.$refs.video;
+            }
+        },
+        mounted() {
+            this.el.onloadedmetadata = ({ target }) => {
+                this.duration = target.duration;
+            };
+        }
+    });
+
+    const app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                videos: [
+                    {
+                        source: 'videos/alan_walker_faded_60ItHLz5WEA_360p.mp4',
+                        large: true
+                    },
+                    {
+                        source: 'videos/avicii_waiting_for_love_cHHLHGNpCSA_360p.mp4',
+                    },
+                    {
+                        source: 'videos/coldplay_viva_la_vida_dvgZkm1xWPE_360p.mp4',
+                    }
+                ]
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

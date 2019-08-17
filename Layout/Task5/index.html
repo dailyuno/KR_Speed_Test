@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0a061d;
+        }
+
+        .loading {
+            width: 80px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .loading div {
+            width: 10px;
+            height: 50%;
+            background-color: #60fdfd;
+            animation: loading 1s ease-out infinite;
+        }
+
+        .loading div:nth-child(1) {
+            -webkit-animation-delay: -0.375s;
+            -moz-animation-delay: -0.375s;
+            -o-animation-delay: -0.375s;
+            animation-delay: -0.375s;
+        }
+
+        .loading div:nth-child(2) {
+            -webkit-animation-delay: -0.25s;
+            -moz-animation-delay: -0.25s;
+            -o-animation-delay: -0.25s;
+            animation-delay: -0.25s;
+        }
+
+        .loading div:nth-child(3) {
+            -webkit-animation-delay: -0.125s;
+            -moz-animation-delay: -0.125s;
+            -o-animation-delay: -0.125s;
+            animation-delay: -0.125s;
+        }
+
+        @keyframes loading {
+            0%, 100% {
+                height: 50%;
+            }
+            50% {
+                height: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "jpy": {
+    "code": "JPY",
+    "name": "Japanese Yen",
+    "rate": 111.65243997595
+  },
+  "brl": {
+    "code": "BRL",
+    "name": "Brazilian Real",
+    "rate": 3.840458462827
+  },
+  "krw": {
+    "code": "KRW",
+    "name": "South Korean Won",
+    "rate": 1135.8077864349
+  }
+}

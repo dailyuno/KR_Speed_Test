@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<div id="app">
+    <div class="graph-container">
+        <svg :width="width + gap * 2" :height="height + gap * 2">
+            <template v-for="(item, idx) in posItems">
+                <path :d="getData(item, idx)" v-if="idx > 0" fill="transparent" stroke="#007bfd" stroke-width="3"></path>
+            </template>
+
+            <template v-for="(item, idx) in posItems">
+                <circle :cx="item.x" :cy="item.y" r="5" fill="#556688"></circle>
+            </template>
+        </svg>
+    </div>
+</div>
+
+<script src="vue.min.js"></script>
+<script>
+    const app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                width: 1000,
+                height: 500,
+                gap: 20,
+                items: [200, 300, 400, 400, 100, 200, 300, 400, 50, 100, 0, 1000]
+            }
+        },
+        methods: {
+            getControls(prev, current, next, t) {
+                const d01 = Math.sqrt(Math.pow(current.x - prev.x, 2) + Math.pow(current.y - prev.y, 2));
+                const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
+                const fa = t * d01 / (d01 + d12);
+                const fb = t * d12 / (d01 + d12);
+
+                return {
+                    prev: {
+                        x: current.x - fa * (next.x - prev.x),
+                        y: current.y - fa * (next.y - prev.y)
+                    },
+                    next: {
+                        x: current.x + fb * (next.x - prev.x),
+                        y: current.y + fb * (next.y - prev.y)
+                    }
+                };
+            },
+            getData({ x, y, prev, next, control }) {
+                return `M${prev.x} ${prev.y} C${prev.control.next.x} ${prev.control.next.y}, ${control.prev.x} ${control.prev.y}, ${x} ${y}`;
+            }
+        },
+        computed: {
+            max() {
+                return Math.max(...this.items.map(x => x));
+            },
+            unit() {
+                const unit = Math.pow(10, (this.max - 1).toString().length - 1) * 5;
+                return Math.ceil(this.max / unit) * unit;
+            },
+            posItems() {
+                return this.items.map((item, idx) => {
+                    return Object.assign({}, item, {
+                        x: (this.width - this.gap * 2) * idx / (this.items.length - 1) + this.gap,
+                        y: (this.height - this.gap * 2) - (this.height - this.gap * 2) * item / this.unit + this.gap,
+                    });
+                }).map((item, idx, list) => {
+                    return Object.assign(item, {
+                        prev: list[idx < 1 ? idx : idx - 1],
+                        next: list[idx >= list.length - 1 ? list.length - 1 : idx + 1]
+                    });
+                }).map((item, idx) => {
+                    const control = this.getControls(item.prev, item, item.next, 0.4);
+                    return Object.assign(item, { control });
+                });
+            },
+            controlItems() {
+
+            }
+        },
+        created() {
+            console.log(this.items, this.posItems);
+        },
+        mounted() {
+        }
+    });
+</script>
+
+</body>
+</html>

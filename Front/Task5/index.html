@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="fontawesome/css/all.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            font-family: Calibri;
+        }
+
+        html,
+        body {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-form {
+            width: 240px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-form input,
+        .search-form button {
+            border: 1px solid #ddd;
+        }
+
+        .search-form input {
+            flex: 1;
+            height: 40px;
+            padding: 8px 12px;
+        }
+
+        .search-form button {
+            flex: 1 0 40px;
+            max-width: 40px;
+            height: 40px;
+            background-color: #fff;
+            border-left: none;
+            color: #007bfd;
+        }
+
+        #app {
+            width: 100%;
+            padding-top: 100px;
+        }
+
+        .calendar {
+            width: 240px;
+            position: relative;
+            border: 1px solid #ddd;
+            border-bottom: 2px solid #007bfd;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .calendar-header button {
+            border: none;
+            background-color: transparent;
+            font-family: Consolas;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .calendar-body table {
+            width: 100%;
+        }
+
+        .calendar-body td,
+        .calendar-body th {
+            width: calc(100% / 7);
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .calendar-body td.other-day {
+            color: #bbb;
+        }
+
+        .calendar-body td:hover {
+            background-color: #007bfd;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <div class="search-form">
+            <input type="text" readonly v-model="selectDate" @mousedown.stop="showCalendar = true">
+            <button>
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <div class="calendar" v-show="showCalendar">
+            <div class="calendar-header">
+                <button @click="prev">&lt;</button>
+                <h4>{{ enMonth }} {{ year }}</h4>
+                <button @click="next">&gt;</button>
+            </div>
+            <div class="calendar-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Su</th>
+                            <th>Mo</th>
+                            <th>Tu</th>
+                            <th>We</th>
+                            <th>Th</th>
+                            <th>Fr</th>
+                            <th>Sa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="week in days">
+                            <td v-for="day in week"
+                                :class="{'other-day': day.getMonth() !== month}"
+                                @click="setDate(day)">
+                                {{ day.getDate() }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    date: new Date,
+                    enMonthList: [
+                        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+                    ],
+                    showCalendar: false,
+                    selectDate: ''
+                }
+            },
+            methods: {
+                prev() {
+                    this.date = new Date(this.year, this.month - 1);
+                },
+                next() {
+                    this.date = new Date(this.year, this.month + 1);
+                },
+                setDate(day) {
+                    this.showCalendar = false;
+                    this.selectDate = `${(day.getMonth() + 1).toString().padStart(2, '0')}/${day.getDate().toString().padStart(2, '0')}/${day.getFullYear()}`;
+                }
+            },
+            computed: {
+                year() {
+                    return this.date.getFullYear();
+                },
+                month() {
+                    return this.date.getMonth();
+                },
+                enMonth() {
+                    return this.enMonthList[this.month];
+                },
+                startDay() {
+                    return new Date(this.year, this.month).getDay();
+                },
+                lastDay() {
+                    return new Date(this.year, this.month + 1, 0).getDate();
+                },
+                prevMonthLastDay() {
+                    return new Date(this.year, this.month, 0).getDate();
+                },
+                days() {
+                    const days = [ [], [], [], [], [], [] ];
+
+                    for (let i = 0; i < days.length; i++) {
+                        for (let j = 0; j < 7; j++) {
+                            const date = new Date(this.year, this.month, i * 7 + j - this.startDay + 1);
+                            days[i].push(date);
+                        }
+                    }
+
+                    return days;
+                }
+            },
+            created() {
+                document.addEventListener('mousedown', ev => {
+                    if (!ev.target.closest('.calendar')) {
+                        this.showCalendar = false;
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

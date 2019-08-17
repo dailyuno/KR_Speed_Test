@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            font-family: Calibri;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+        }
+
+        .menu {
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            cursor: pointer;
+            pointer-events: none;
+        }
+
+        .menu:hover {
+            pointer-events: all;
+        }
+
+        .label {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        .spacer {
+            width: 80px;
+            margin: 0 15px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .spacer:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 1px;
+            background-color: #fff;
+            -webkit-transition: width 0.25s ease;
+            -moz-transition: width 0.25s ease;
+            -ms-transition: width 0.25s ease;
+            -o-transition: width 0.25s ease;
+            transition: width 0.25s ease;
+            -webkit-transition-delay: 0.7s;
+            -moz-transition-delay: 0.7s;
+            -ms-transition-delay: 0.7s;
+            -o-transition-delay: 0.7s;
+            transition-delay: 0.7s;
+        }
+
+        .item {
+            position: relative;
+            top: 10px;
+            margin-right: 30px;
+            opacity: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        .menu:hover .spacer:before {
+            width: 100%;
+            -webkit-transition-delay: 0s;
+            -moz-transition-delay: 0s;
+            -ms-transition-delay: 0s;
+            -o-transition-delay: 0s;
+            transition-delay: 0s;
+        }
+
+        .item:nth-child(3) {
+            -webkit-transition-delay: 0.35s;
+            -moz-transition-delay: 0.35s;
+            -ms-transition-delay: 0.35s;
+            -o-transition-delay: 0.35s;
+            transition-delay: 0.35s;
+        }
+
+        .item:nth-child(4) {
+            -webkit-transition-delay: 0.3s;
+            -moz-transition-delay: 0.3s;
+            -ms-transition-delay: 0.3s;
+            -o-transition-delay: 0.3s;
+            transition-delay: 0.3s;
+        }
+
+        .item:nth-child(5) {
+            -webkit-transition-delay: 0.25s;
+            -moz-transition-delay: 0.25s;
+            -ms-transition-delay: 0.25s;
+            -o-transition-delay: 0.25s;
+            transition-delay: 0.25s;
+        }
+
+        .item:nth-child(6) {
+            -webkit-transition-delay: 0.2s;
+            -moz-transition-delay: 0.2s;
+            -ms-transition-delay: 0.2s;
+            -o-transition-delay: 0.2s;
+            transition-delay: 0.2s;
+        }
+
+        .item:nth-child(7) {
+            -webkit-transition-delay: 0.15s;
+            -moz-transition-delay: 0.15s;
+            -ms-transition-delay: 0.15s;
+            -o-transition-delay: 0.15s;
+            transition-delay: 0.15s;
+        }
+
+        .menu:hover .item {
+            top: 0;
+            opacity: 1;
+        }
+
+        .menu:hover .item:nth-child(3) {
+            -webkit-transition-delay: 0.35s;
+            -moz-transition-delay: 0.35s;
+            -ms-transition-delay: 0.35s;
+            -o-transition-delay: 0.35s;
+            transition-delay: 0.35s;
+        }
+
+        .menu:hover .item:nth-child(4) {
+            -webkit-transition-delay: 0.4s;
+            -moz-transition-delay: 0.4s;
+            -ms-transition-delay: 0.4s;
+            -o-transition-delay: 0.4s;
+            transition-delay: 0.4s;
+        }
+
+        .menu:hover .item:nth-child(5) {
+            -webkit-transition-delay: 0.45s;
+            -moz-transition-delay: 0.45s;
+            -ms-transition-delay: 0.45s;
+            -o-transition-delay: 0.45s;
+            transition-delay: 0.45s;
+        }
+
+        .menu:hover .item:nth-child(6) {
+            -webkit-transition-delay: 0.5s;
+            -moz-transition-delay: 0.5s;
+            -ms-transition-delay: 0.5s;
+            -o-transition-delay: 0.5s;
+            transition-delay: 0.5s;
+        }
+
+        .menu:hover .item:nth-child(7) {
+            -webkit-transition-delay: 0.55s;
+            -moz-transition-delay: 0.55s;
+            -ms-transition-delay: 0.55s;
+            -o-transition-delay: 0.55s;
+            transition-delay: 0.55s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu">
+        <div class="label">Follow Me</div>
+        <div class="spacer"></div>
+        <div class="item"><span>Twitter</span></div>
+        <div class="item"><span>Instagram</span></div>
+        <div class="item"><span>Flickr</span></div>
+        <div class="item"><span>Behance</span></div>
+        <div class="item"><span>MixCloud</span></div>
+    </div>
+
+</body>
+</html>

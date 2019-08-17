@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <canvas id="graph"></canvas>
+
+    <script src="vue.min.js"></script>
+    <script>
+        window.onload = function() {
+            init();
+        };
+
+        const init = () => {
+            fetch('data.json')
+                .then(res => res.json())
+                .then(res => {
+                    const c = document.getElementById('graph');
+                    const width = 500;
+                    const height = 500;
+                    const ctx = c.getContext('2d');
+                    const data = res.data;
+                    const sum = data.map(x => x.value).reduce((a, b) => a + b);
+                    const radius = Math.min(width, height) / 2;
+                    let lastAngle = Math.PI * -0.5;
+
+                    c.width = width;
+                    c.height =  height;
+
+                    data.forEach(x => {
+                        const angle = Math.PI * 2 * (x.value / sum);
+                        const text = x.value / sum * 100 + '%';
+                        const labelX = c.width / 2 + Math.cos(lastAngle + angle / 2) * radius / 2 - ctx.measureText(text).width / 2;
+                        const labelY = c.height / 2 + Math.sin(lastAngle + angle / 2) * radius / 2;
+                        ctx.fillStyle = x.fillStyle;
+                        ctx.beginPath();
+                        ctx.moveTo(width / 2, height / 2);
+                        ctx.arc(width / 2, height / 2, radius, lastAngle, lastAngle + angle)
+                        ctx.lineTo(width / 2, height / 2);
+                        ctx.fill();
+                        ctx.closePath();
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '16px Calibri';
+                        ctx.fillText(text, labelX, labelY);
+                        lastAngle += angle;
+                    });
+                });
+        };
+    </script>
+
+</body>
+</html>

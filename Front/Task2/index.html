@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="font-awesome/css/fontawesome.css">
+</head>
+<body>
+
+	<div id="app">
+		<div class="container">
+			<div class="img-container" @dragover.prevent @drop.prevent="drop"
+				:class="{'is-drop': load}">
+				<span >Drag & Drop image</span>
+				<canvas id="mycanvas" width="825" height="500" ref="canvas"></canvas>
+			</div>
+			<div class="btn-group">
+				<button class="btn btn-primary" @click="scale(0.1)">
+					<span class="fa fa-search-plus"></span>
+				</button>
+				<button class="btn btn-primary" @click="scale(-0.1)">
+					<span class="fa fa-search-minus"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<button class="btn btn-primary" @click="rotate(-90)">
+					<span class="fa fa-undo"></span>
+				</button>
+				<button class="btn btn-primary" @click="rotate(90)">
+					<span class="fa fa-redo"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<button class="btn btn-primary" @click="flip">
+					<span class="fa fa-arrows-alt-h"></span>
+				</button>
+				<button class="btn btn-primary" @click="flop">
+					<span class="fa fa-arrows-alt-v"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<button class="btn btn-primary" @click="trash">
+					<span class="fa fa-trash"></span>
+				</button>
+				<button class="btn btn-primary" @click="download">
+					<span class="fa fa-download"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	
+	<script src="jquery/jquery-3.3.1.min.js"></script>
+	<script src="vue.min.js"></script>
+	<script>
+		const app = new Vue({
+			el: "#app",
+			data() {
+				return {
+					img: new Image(),
+					load: false,
+					options: {
+						scale: 1,
+						rotate: 0,
+						flip: false,
+						flop: false
+					}
+				}
+			},
+			methods: {
+				drop({ dataTransfer }) {
+					const { files } = dataTransfer;
+					if (files.length > 0) {
+						const reader = new FileReader();
+						reader.readAsDataURL(files[0]);
+						reader.onload = rs => {
+							this.img.src = rs.target.result;
+							this.img.onload = () => {
+								this.load = true;
+								this.draw();
+							};
+						};
+					}
+				},
+				clear() {
+					const { width, height } = this.canvas;
+					this.ctx.clearRect(0, 0, width, height);
+				},
+				scale(size) {
+					this.options.scale += size;
+					this.draw();
+				},
+				rotate(angle) {
+					this.options.rotate += angle;
+					this.draw();
+				},
+				flip() {
+					this.options.flip = !this.options.flip;
+					this.draw();
+				},
+				flop() {
+					this.options.flop = !this.options.flop;
+					this.draw();
+				},
+				draw() {
+					if (!this.load) return;
+					const ctx = this.ctx;
+					const { scale, rotate, flip, flop } = this.options;
+					const { width: cw, height: ch } = this.canvas;
+					const { width: iw, height: ih } = this.img;
+					const width = cw > iw ? iw : cw;
+					const height = ch > ih ? ih : ch;
+					const drawWidth = width * scale;
+					const drawHeight = height * scale;
+					ctx.save();
+					this.clear();
+					ctx.translate(cw / 2, ch / 2);
+					ctx.rotate(rotate * Math.PI / 180);
+					ctx.translate(-cw / 2, -ch / 2);
+					if (flip) {
+						ctx.translate(cw / 2, ch / 2);
+						ctx.scale(-1, 1);
+						ctx.translate(-cw / 2, -ch / 2);
+					}
+					if (flop) {
+						ctx.translate(cw / 2, ch / 2);
+						ctx.scale(1, -1);
+						ctx.translate(-cw / 2, -ch / 2);
+					}
+					ctx.drawImage(this.img, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+					ctx.restore();
+				},
+				trash() {
+					this.load = false;
+					this.clear();
+					const options = this.options;
+					options.scale = 1;
+					options.rotate = 0;
+					options.flip = false;
+					options.flop = false;
+				},
+				download() {
+					const link = document.createElement('a');
+					link.setAttribute('href', this.canvas.toDataURL());
+					link.setAttribute('download', '');
+					document.body.appendChild(link);
+					link.click();
+					link.remove();
+				}
+			},
+			computed: {
+				canvas() {
+					return this.$refs.canvas;
+				},
+				ctx() {
+					return this.canvas.getContext('2d');
+				}
+			}
+		});
+	</script>
+
+</body>
+</html>

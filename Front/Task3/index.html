@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            font-family: Calibri;
+        }
+
+        html,
+        body,
+        #app {
+            height: 100%;
+        }
+
+        aside {
+            width: 300px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #f1f7fc;
+            z-index: 10;
+        }
+
+        .group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        main {
+            width: 100%;
+            height: 100%;
+            padding-left: 300px;
+            position: relative;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <aside>
+            <div class="group">
+                <label for="basic">Basic Draw</label>
+                <input type="radio" v-model="option.draw" value="basic" id="basic">
+            </div>
+            <div class="group">
+                <label for="color">Color</label>
+                <input type="color" v-model="option.color" id="color">
+            </div>
+            <div class="group">
+                <label for="brush_size">Brush Size</label>
+                <input type="number" v-model="option.size" id="brush_size">
+            </div>
+            <div class="group">
+                <label for="rubber">Rubber</label>
+                <input type="radio" v-model="option.draw" value="rubber" id="rubber">
+            </div>
+            <div class="group">
+                <label for="mirror">Mirror</label>
+                <input type="checkbox" v-model="option.mirror" id="mirror">
+            </div>
+            <div class="group">
+                <label for="fill">Fill</label>
+                <input type="radio" v-model="option.type" value="fill" id="fill">
+            </div>
+            <div class="group">
+                <label for="stroke">Stroke</label>
+                <input type="radio" v-model="option.type" value="stroke" id="stroke">
+            </div>
+            <div class="group">
+                <label for="rect">Rect</label>
+                <input type="radio" v-model="option.draw" value="rect" id="rect">
+            </div>
+            <div class="group">
+                <label for="circle">Circle</label>
+                <input type="radio" v-model="option.draw" value="circle" id="circle">
+            </div>
+            <div class="group">
+                <label for="rainbow">Rainbow</label>
+                <input type="radio" v-model="option.draw" value="rainbow" id="rainbow">
+            </div>
+        </aside>
+        <main>
+            <canvas ref="paint" @mousedown="drawstart"></canvas>
+        </main>
+    </div>
+
+    <script src="vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    option: {
+                        draw: 'circle',
+                        color: '#000000',
+                        mirror: true,
+                        type: 'fill',
+                        size: 10,
+                        hsla: 0
+                    },
+                    isDraw: false,
+                    saveData: new Image(),
+                    down: {x: 0, y: 0},
+                    move: {x: 0, y: 0}
+                }
+            },
+            methods: {
+                clear() {
+                    const { width, height } = this.canvas;
+                    this.ctx.clearRect(0, 0, width, height);
+                },
+                save() {
+                    this.saveData.src = this.canvas.toDataURL();
+                },
+                restore() {
+                    const { width, height } = this.canvas;
+                    this.clear();
+                    this.ctx.drawImage(this.saveData, 0, 0, width, height);
+                },
+                drawstart({ offsetX, offsetY }) {
+                    this.isDraw = true;
+                    const pos = {x: offsetX, y: offsetY};
+                    this.down = Object.assign({}, pos);
+                    this.move = Object.assign({}, pos);
+                },
+                drawmove({ pageX, pageY }) {
+                    if (!this.isDraw) return;
+
+                    const ctx = this.ctx;
+                    const option = this.option;
+                    const { width, height } = this.canvas;
+                    const { draw, color, mirror, type, size } = option;
+                    const { x: dx, y: dy } = this.down;
+                    const { x: mx, y: my } = this.move;
+                    const px = pageX - 300;
+                    const py = pageY;
+
+                    ctx.lineCap = 'round';
+                    ctx.lineWidth = size;
+                    ctx.strokeStyle = color;
+                    ctx.globalCompositeOperation = 'source-over';
+
+                    switch (draw) {
+                        case 'rubber':
+                            ctx.globalCompositeOperation = 'destination-out';
+                            break;
+                        case 'rainbow':
+                            ctx.strokeStyle = `hsla(${option.hsla++}, 100%, 50%)`;
+                            break;
+                    }
+
+                    switch (draw) {
+                        case 'basic':
+                        case 'rubber':
+                        case 'rainbow':
+                            this.drawLine(ctx, mx, my, px, py);
+                            if (mirror) this.drawLine(ctx, width - mx, my, width - px, py);
+                            break;
+                        case 'rect':
+                            const rx = dx > px ? px : dx;
+                            const ry = dy > py ? py : dy;
+                            const rw = dx > px ? dx - px : px - dx;
+                            const rh = dy > py ? dy - py : py - dy;
+
+                            this.restore();
+                            this.drawRect(ctx, rx, ry, rw, rh);
+                            if (mirror) this.drawRect(ctx, width - rx, ry, -rw, rh);
+                            break;
+                        case 'circle':
+                            const cx = (dx + px) / 2;
+                            const cy = (dy + py) / 2;
+                            const crx = Math.sqrt(Math.pow(px - dx, 2)) / 2;
+                            const cry = Math.sqrt(Math.pow(py - dy, 2)) / 2;
+
+                            this.restore();
+                            this.drawEllipse(ctx, cx, cy, crx, cry);
+                            if (mirror) this.drawEllipse(ctx, width - cx, cy, crx, cry);
+                            break;
+                    }
+
+                    this.move.x = px;
+                    this.move.y = py;
+                },
+                drawend() {
+                    this.isDraw = false;
+                    this.save();
+                },
+                drawLine(ctx, x1, y1, x2, y2) {
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    ctx.closePath();
+                },
+                drawRect(ctx, x, y, width, height) {
+                    ctx.beginPath();
+                    ctx.rect(x, y, width, height);
+                    this.fill ? ctx.fill() : ctx.stroke();
+                    ctx.closePath();
+                },
+                drawEllipse(ctx, x, y, radiusX, radiusY) {
+                    ctx.beginPath();
+                    ctx.ellipse(x, y, radiusX, radiusY, 0, Math.PI * 2, false);
+                    this.fill ? ctx.fill() : ctx.stroke();
+                    ctx.closePath();
+                }
+            },
+            computed: {
+                canvas() {
+                    return this.$refs.paint;
+                },
+                ctx() {
+                    return this.canvas.getContext('2d');
+                },
+                fill() {
+                    return this.option.type === 'fill';
+                }
+            },
+            mounted() {
+                this.canvas.width = window.innerWidth - 300;
+                this.canvas.height = window.innerHeight;
+
+                document.addEventListener('mousemove', this.drawmove.bind(this));
+                document.addEventListener('mouseup', this.drawend.bind(this));
+            }
+        });
+    </script>
+
+</body>
+</html>

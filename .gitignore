@@ -1,0 +1,45 @@
+# Backend - Task1
+Backend/Task1/*
+!Backend/Task1/upload.php
+
+# Backend - Task2
+Backend/Task2/*
+!Backend/Task2/index.php
+
+# Backend - Task3
+Backend/Task3/fonts
+
+# Backend - Task4
+Backend/Task4/fonts
+
+# Backend - Task5
+Backend/Task5/*
+!Backend/Task5/index.php
+
+# Backend - Task6
+Backend/Task6/*
+!Backend/Task6/index.php
+
+# Backend - Task7
+Backend/Task7/bootstrap.min.css
+
+# CMS
+CMS/*/*
+!CMS/*/wp-content/
+CMS/*/wp-content/*
+!CMS/*/wp-content/plugins/
+CMS/*/wp-content/plugins/akismet/
+CMS/*/wp-content/plugins/hello.php
+CMS/*/wp-content/plugins/index.php
+CMS/*/wp-content/plugins/*/fontawesome
+
+# Front
+Front/*/vue.min.js
+Front/*/bootstrap.min.css
+Front/*/font-awesome
+Front/*/fontawesome
+Front/*/jquery
+Front/*/videos
+
+# Layout
+Layout/*/fontawesome

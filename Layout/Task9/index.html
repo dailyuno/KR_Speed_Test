@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #loader {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        #loader div {
+            width: 40px;
+            height: 40px;
+            background-color: #fa555f;
+            position: absolute;
+        }
+
+        #loader div:nth-child(1) {
+            top: 0;
+            left: 0;
+            animation: slide1 6s infinite;
+        }
+
+        @keyframes slide1 {
+            91.66% {
+                top: 0;
+                left: 0;
+            }
+            100% {
+                top: 25%;
+                left: 0;
+            }
+        }
+
+        #loader div:nth-child(2) {
+            top: 0;
+            left: 25%;
+            animation: slide2 6s infinite;
+        }
+
+        @keyframes slide2 {
+            8.33% {
+                top: 0;
+                left: 25%;
+            }
+            16.66% {
+                top: -25%;
+                left: 25%;
+            }
+            25% {
+                top: -25%;
+                left: 50%;
+            }
+            33.33%,
+            58.33% {
+                top: 0;
+                left: 50%;
+            }
+            66.66% {
+                top: 25%;
+                left: 50%;
+            }
+            75% {
+                top: 25%;
+                left: 25%;
+            }
+            83.33%,
+            100% {
+                top: 0;
+                left: 25%;
+            }
+        }
+
+        #loader div:nth-child(3) {
+            top: 0;
+            left: 50%;
+            animation: slide3 6s infinite;
+        }
+
+        @keyframes slide3 {
+            25% {
+                top: 0;
+                left: 50%;
+            }
+            33.33% {
+                top: 25%;
+                left: 50%;
+            }
+            41.66% {
+                top: 25%;
+                left: 75%;
+            }
+            50%,
+            100% {
+                top: 0;
+                left: 75%;
+            }
+        }
+
+        #loader div:nth-child(4) {
+            top: 0;
+            left: 75%;
+            animation: slide4 6s infinite;
+        }
+
+        @keyframes slide4 {
+            41.66% {
+                top: 0;
+                left: 75%;
+            }
+            50% {
+                top: -25%;
+                left: 75%;
+            }
+            58.33% {
+                top: -25%;
+                left: 50%;
+            }
+            66.66%,
+            100% {
+                top: 0;
+                left: 50%;
+            }
+        }
+
+        #loader div:nth-child(5) {
+            top: 25%;
+            left: 0;
+            animation: slide5 6s infinite;
+        }
+
+        @keyframes slide5 {
+            8.33% {
+                top: 25%;
+                left: 25%;
+            }
+            16.66%,
+            75% {
+                top: 0;
+                left: 25%;
+            }
+            83.33% {
+                top: -25%;
+                left: 25%;
+            }
+            91.66% {
+                top: -25%;
+                left: 0;
+            }
+            100% {
+                top: 0;
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+</body>
+</html>

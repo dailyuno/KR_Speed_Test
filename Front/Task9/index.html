@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag & Drop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app">
+        <div class="container" id="first-container" @dragover.prevent @drop="drop('first')">
+            <template v-for="item in firstItems">
+                <div class="box"
+                     :key="item.id"
+                     :data-id="item.id"
+                     :class="{selected: item.selected}"
+                     draggable="true"
+                     @dragstart="dragstart(item)"
+                     @dragend="dragend(item)">
+                    {{ item.text }}
+                </div>
+            </template>
+        </div>
+
+        <div class="container" id="second-container" @dragover.prevent @drop="drop('second')">
+            <template v-for="item in secondItems">
+                <div class="box"
+                     :key="item.id"
+                     :data-id="item.id"
+                     :class="{selected: item.selected}"
+                     draggable="true"
+                     @dragstart="dragstart(item)"
+                     @dragend="dragend(item)">
+                    {{ item.text }}
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script src="vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    items: [
+                        this.makeItem(1),
+                        this.makeItem(2),
+                        this.makeItem(3),
+                        this.makeItem(4),
+                        this.makeItem(5),
+                        this.makeItem(6)
+                    ]
+                }
+            },
+            methods: {
+                makeItem(text) {
+                    return {
+                        id: text,
+                        selected: false,
+                        drag: false,
+                        parent: 'first',
+                        time: Date.now(),
+                        text
+                    }
+                },
+                dragstart(item) {
+                    item.selected = true;
+                    document.querySelector(`.box[data-id="${item.id}"]`).classList.add('drag');
+                },
+                dragend(item) {
+                    item.selected = false;
+                },
+                drop(type) {
+                    const dragItem = this.items.find(({ selected }) => selected === true);
+                    dragItem.parent = type;
+                    dragItem.time = Date.now();
+                },
+                sort(a, b) {
+                    if (a.time === b.time) return 0;
+
+                    return a.time > b.time ? 1 : -1;
+                }
+            },
+            computed: {
+                firstItems() {
+                    return this.items.filter(({ parent }) => parent === 'first').sort(this.sort);
+                },
+                secondItems() {
+                    return this.items.filter(({ parent }) => parent === 'second').sort(this.sort);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

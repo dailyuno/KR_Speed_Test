@@ -1,0 +1,20 @@
+{
+	"data": [
+		{
+			"value": 40,
+			"fillStyle": "#f44336"
+		},
+		{
+			"value": 20,
+			"fillStyle": "#2196f3"
+		},
+		{
+			"value": 30,
+			"fillStyle": "#009688"
+		},
+		{
+			"value": 10,
+			"fillStyle": "#666666"
+		}
+	]
+}

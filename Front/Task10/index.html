@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON to XML</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <button id="convert" onclick="convert()">convert</button>
+    <div class="content">
+			<textarea id="json">
+"breakfast-menu": {
+	"food": [
+		{
+			"name": "Belgian Waffles",
+			"price": "$5.95",
+			"description": "Belgian Waffles",
+			"calories": "650"
+		},
+		{
+			"name": "Strawberry Belgian Waffles",
+			"price": "$7.95",
+			"description": "Strawberry Belgian waffles",
+			"calories": "900"
+		},
+		{
+			"name": "Berry-Berry Belgian Waffles",
+			"price": "$8.95",
+			"description": "Berry-Berry Belgian waffles",
+			"calories": "900"
+		},
+		{
+			"name": "French Toast",
+			"price": "$4.50",
+			"description": "French Toast",
+			"calories": "600"
+		},
+		{
+			"name": "Homestyle Breakfast",
+			"price": "$6.95",
+			"description": "Homestyle Breakfast",
+			"calories": "950"
+		}
+	]
+}</textarea>
+
+        <textarea id="xml"></textarea>
+    </div>
+</div>
+
+<script>
+    function convert() {
+        const json = document.getElementById('json').value;
+        let jsonData;
+        try {
+			jsonData = JSON.parse(`${json}`);
+		} catch (e) {
+			jsonData = JSON.parse(`\{${json}\}`);
+		}
+        const xml = objectToXml(jsonData);
+        document.getElementById('xml').value = xml;
+    }
+
+	function objectToXml(object, tab = 0) {
+		let xml = '';
+		for (let prop in object) {
+			if (!object.hasOwnProperty(prop)) {
+				continue;
+			}
+			if (object[prop] == undefined)
+				continue;
+
+			if (!Array.isArray(object[prop])) {
+				for (let i = 0; i < tab; i++) {
+					xml += "\t";
+				}
+				xml += "<" + prop + ">";
+			}
+
+			if (Array.isArray(object[prop])) {
+				object[prop].forEach(x => {
+					const obj = {};
+					obj[prop] = x;
+					xml += objectToXml(obj, tab);
+				});
+			} else if (typeof object[prop] == "object") {
+				xml += "\n";
+				xml += objectToXml(new Object(object[prop]), tab  + 1);
+				for (let i = 0; i < tab; i++) {
+					xml += "\t";
+				}
+			} else {
+				xml += object[prop];
+			}
+
+			if (!Array.isArray(object[prop])) {
+				xml += "</" + prop + ">";
+				xml += "\n";
+			}
+		}
+		return xml;
+	}
+</script>
+
+</body>
+</html>

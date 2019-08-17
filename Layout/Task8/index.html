@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: Calibri;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button {
+            font-size: 16px;
+            line-height: 1;
+            color: #fff;
+            background-color: #379aff;
+            cursor: pointer;
+            border: none;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 44px;
+            position: relative;
+        }
+
+        button:before {
+            background-color: #13c276;
+            -webkit-transition: left 1s cubic-bezier(0.86, 0, 0.07, 1) 0.4s;
+            -moz-transition: left 1s cubic-bezier(0.86, 0, 0.07, 1) 0.4s;
+            -ms-transition: left 1s cubic-bezier(0.86, 0, 0.07, 1) 0.4s;
+            -o-transition: left 1s cubic-bezier(0.86, 0, 0.07, 1) 0.4s;
+            transition: left 1s cubic-bezier(0.86, 0, 0.07, 1) 0.4s;
+            z-index: 5;
+        }
+
+        button:after {
+            background-color: rgba(255, 255, 255, 0.8);
+            -webkit-transition: left 0.8s cubic-bezier(0.86, 0, 0.07, 1) 0.6s;
+            -moz-transition: left 0.8s cubic-bezier(0.86, 0, 0.07, 1) 0.6s;
+            -ms-transition: left 0.8s cubic-bezier(0.86, 0, 0.07, 1) 0.6s;
+            -o-transition: left 0.8s cubic-bezier(0.86, 0, 0.07, 1) 0.6s;
+            transition: left 0.8s cubic-bezier(0.86, 0, 0.07, 1) 0.6s;
+            z-index: 0;
+        }
+
+        button:before,
+        button:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -130%;
+            width: 120%;
+            height: 100%;
+            -webkit-transform: skew(-25deg);
+            -moz-transform: skew(-25deg);
+            -ms-transform: skew(-25deg);
+            -o-transform: skew(-25deg);
+            transform: skew(-25deg);
+        }
+
+        button:hover:before {
+            left: -10%;
+            -webkit-transition-delay: 0s;
+            -moz-transition-delay: 0s;
+            -ms-transition-delay: 0s;
+            -o-transition-delay: 0s;
+            transition-delay: 0s;
+        }
+
+        button:hover:after {
+            left: -10%;
+            -webkit-transition-delay: 0s;
+            -moz-transition-delay: 0s;
+            -ms-transition-delay: 0s;
+            -o-transition-delay: 0s;
+            transition-delay: 0s;
+        }
+
+        button span {
+            position: relative;
+            z-index: 10;
+        }
+
+        button .text {
+            width: 0;
+            height: 0;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            background-color: #fa555f;
+            -webkit-transition: all 0.4s;
+            -moz-transition: all 0.4s;
+            -ms-transition: all 0.4s;
+            -o-transition: all 0.4s;
+            transition: all 0.4s;
+            z-index: 10;
+        }
+
+        button:hover .text {
+            width: 144px;
+            height: 144px;
+            -webkit-transition-delay: 1s;
+            -moz-transition-delay: 1s;
+            -ms-transition-delay: 1s;
+            -o-transition-delay: 1s;
+            transition-delay: 1s;
+        }
+
+        button:hover {
+            animation: pulse 1s;
+            -webkit-animation-delay: 1.4s;
+            -moz-animation-delay: 1.4s;
+            -o-animation-delay: 1.4s;
+            animation-delay: 1.4s;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(250, 85, 95, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(250, 85, 95, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(250, 85, 95, 0);
+            }
+        }
+
+        button:hover .text span {
+            opacity: 1;
+            -webkit-transition-delay: 1.4s;
+            -moz-transition-delay: 1.4s;
+            -ms-transition-delay: 1.4s;
+            -o-transition-delay: 1.4s;
+            transition-delay: 1.4s;
+        }
+
+        button .text span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            -webkit-transition: opacity 0.4s;
+            -moz-transition: opacity 0.4s;
+            -ms-transition: opacity 0.4s;
+            -o-transition: opacity 0.4s;
+            transition: opacity 0.4s;
+        }
+    </style>
+</head>
+<body>
+
+    <button>
+        <span>Hover Me</span>
+        <div class="text">
+            <span>Hover</span>
+        </div>
+    </button>
+
+</body>
+</html>

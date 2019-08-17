@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+        * {
+            font-family: Calibri;
+        }
+
+        #graph {
+            width: 100%;
+            height: 700px;
+        }
+
+        .list li:nth-child(1) {
+            color: #fea15b;
+        }
+
+        .list li:nth-child(2) {
+            color: #fa555f;
+        }
+
+        .list li:nth-child(3) {
+            color: #007bfd;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <div class="container pt-5" v-if="load">
+            <h4>Death rates from air pollution, {{ country }}</h4>
+            <p>Age-standardized death rates from outdoor ozone, particulates, and indoor fuel pollution per 100,000 individuals.</p>
+
+            <ul class="list">
+                <li>Ozone pollution</li>
+                <li>Household pollution from solid fuels</li>
+                <li>Outdoor particulate matter</li>
+            </ul>
+
+            <div class="form-group">
+                <select v-model="country" class="form-control" @change="draw">
+                    <option v-for="country in countriesAsList">
+                        {{ country }}
+                    </option>
+                </select>
+            </div>
+
+            <svg id="graph" ref="graph">
+                <g v-if="canDraw">
+                    <template v-for="({ text, x, y }) in countryUnits">
+                        <text text-anchor="end" :x="x" :y="y">{{ text }}</text>
+                    </template>
+
+                    <template v-for="(items, idx) in graphItemsList">
+                        <path :d="getData(items)" :fill="colors[idx]"></path>
+                    </template>
+
+                    <template v-for="({ text, x, y }) in countryYears">
+                        <text text-anchor="middle" :x="x" :y="y">{{ text }}</text>
+                    </template>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <script src="vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    load: false,
+                    csvItems: [],
+                    fields: [],
+                    countries: new Map,
+                    country: 'World',
+                    graphItemsList: [ [], [], [] ],
+                    colors: ['#fea15b', '#fa555f', '#007bfd'],
+                    gap: 50,
+                    canDraw: false
+                }
+            },
+            methods: {
+                sum(a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                },
+                draw() {
+                    const country = this.selectedCountry;
+                    let i = 0;
+
+                    this.graphItemsList = [ [], [], [] ];
+                    const gw = this.graphWidth;
+                    const gh = this.graphHeight;
+
+                    country.forEach((data, year) => {
+                        let sum = data.reduce(this.sum);
+                        const x = i++ / (country.size - 1) * gw + this.gap;
+
+                        data.forEach((val, idx) => {
+                            const y = gh - gh * sum / this.countryMaxUnit + this.gap;
+                            this.graphItemsList[idx].push({ x, y });
+                            sum -= val;
+                        });
+                    });
+
+                    this.canDraw = true;
+
+                    console.log(this.countryYears);
+                },
+                getData(items) {
+                    const gw = this.graphWidth;
+                    const gh = this.graphHeight;
+                    let data = `M${this.gap} ${gh + this.gap}, `;
+
+                    items.forEach((item, idx) => {
+                        data += `L${item.x} ${item.y}, `;
+                    });
+
+                    data += `L${gw + this.gap} ${gh + this.gap}`;
+
+                    return data;
+                }
+            },
+            computed: {
+                graph() {
+                    return this.$refs.graph;
+                },
+                graphRect() {
+                    return this.graph.getBoundingClientRect();
+                },
+                graphWidth() {
+                    return this.graphRect.width - this.gap * 2;
+                },
+                graphHeight() {
+                    return this.graphRect.height - this.gap * 2;
+                },
+                countriesAsList() {
+                    return Array.from(this.countries.keys());
+                },
+                selectedCountry() {
+                    return this.countries.get(this.country);
+                },
+                countrySumList() {
+                    return Array.from(this.selectedCountry).map(x => x[1]).map(x => x.reduce(this.sum));
+                },
+                countrySumMax() {
+                    return Math.max(...this.countrySumList);
+                },
+                countryMaxUnit() {
+                    return Math.ceil(this.countrySumMax / 50) * 50;
+                },
+                countryUnits() {
+                    const units = [];
+                    const gh = this.graphHeight;
+
+                    for (let i = 0; i < 6; i++) {
+                        units.push({
+                            x: this.gap - 10,
+                            y: gh - gh / 5 * i + this.gap,
+                            text: this.countryMaxUnit / 5 * i
+                        });
+                    }
+
+                    return units;
+                },
+                countryYears() {
+                    const years = Array.from(this.selectedCountry.keys());
+                    const minYear = Math.min(...years);
+                    const maxYear = Math.max(...years);
+                    const diffYear = maxYear - minYear;
+                    const filterYears = [];
+                    const y = this.graphHeight + this.gap + 20;
+
+                    filterYears.push({
+                        x: this.gap,
+                        y,
+                        text: minYear
+                    });
+
+                    years.forEach(year => {
+                        const text = parseInt(year);
+                        if (minYear !== text && maxYear !== text && text % 5 === 0) {
+                            const x = (diffYear - (maxYear - text)) / diffYear * this.graphWidth + this.gap;
+                            filterYears.push({ x, y, text });
+                        }
+                    });
+
+                    filterYears.push({
+                        x: this.graphWidth + this.gap,
+                        y,
+                        text: maxYear
+                    });
+
+                    return filterYears;
+                }
+            },
+            mounted() {
+                fetch('rate.csv')
+                    .then(res => res.text())
+                    .then(res => {
+                        this.csvItems = res.split(/\n/).map(x => x.split(/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/))
+                        this.fields = this.csvItems.shift();
+
+                        this.csvItems.map(([ entity, code, year, ...data ]) => {
+                            if (!this.countries.has(entity)) this.countries.set(entity, new Map);
+
+                            const country = this.countries.get(entity);
+                            country.set(year, data);
+                        });
+
+                        this.load = true;
+                        Vue.nextTick(_ => {
+                            this.draw();
+                        });
+                    });
+            }
+        });
+    </script>
+
+</body>
+</html>

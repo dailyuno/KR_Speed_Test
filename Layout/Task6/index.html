@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+
+        .loading div {
+            width: 40%;
+            height: 40%;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            animation: spin 2s infinite;
+            position: absolute;
+        }
+
+        @keyframes spin {
+            25% {
+                -webkit-transform: translate(160%, 0);
+                -moz-transform: translate(160%, 0);
+                -ms-transform: translate(160%, 0);
+                -o-transform: translate(160%, 0);
+                transform: translate(160%, 0);
+            }
+            50% {
+                -webkit-transform: translate(160%, 160%);
+                -moz-transform: translate(160%, 160%);
+                -ms-transform: translate(160%, 160%);
+                -o-transform: translate(160%, 160%);
+                transform: translate(160%, 160%);
+            }
+            75% {
+                -webkit-transform: translate(0, 160%);
+                -moz-transform: translate(0, 160%);
+                -ms-transform: translate(0, 160%);
+                -o-transform: translate(0, 160%);
+                transform: translate(0, 160%);
+            }
+        }
+
+        .loading div:nth-child(1) {
+            background-color: #19A68C;
+            -webkit-animation-delay: -1.5s;
+            -moz-animation-delay: -1.5s;
+            -o-animation-delay: -1.5s;
+            animation-delay: -1.5s;
+        }
+
+        .loading div:nth-child(2) {
+            background-color: #F63D3A;
+            -webkit-animation-delay: -1s;
+            -moz-animation-delay: -1s;
+            -o-animation-delay: -1s;
+            animation-delay: -1s;
+        }
+
+        .loading div:nth-child(3) {
+            background-color: #FDA543;
+            -webkit-animation-delay: -0.5s;
+            -moz-animation-delay: -0.5s;
+            -o-animation-delay: -0.5s;
+            animation-delay: -0.5s;
+        }
+
+        .loading div:nth-child(4) {
+            background-color: #193B48;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+</body>
+</html>

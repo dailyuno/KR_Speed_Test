@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #app {
+
+        }
+
+        .cropper {
+            display: inline-flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cropper-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .cropper-img {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            border: 2px dotted #fff;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .cropper img {
+            position: relative;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <div class="cropper-container">
+            <div class="cropper" ref="container" @mousedown="cropstart">
+                <img src="img.gif" ref="img" alt="original-img" title="original-img" draggable="false" @dragstart.prevent.stop>
+                <div class="cropper-bg"></div>
+                <div class="cropper-img"
+                    :style="{ left: left + 'px', top: top + 'px', width: width + 'px', height: height + 'px' }">
+                    <img src="img.gif" alt="crop-img" title="crop-img" draggable="false" @dragstart.prevent.stop
+                        :style="{ left: -(left + 2) + 'px', top: -(top + 2) + 'px'}">
+                </div>
+            </div>
+            <div class="group">
+                <button @click="download">download</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    isCrop: false,
+                    down: {x: 0, y: 0},
+                    move: {x: 0, y: 0}
+                }
+            },
+            methods: {
+                cropstart({ offsetX: x, offsetY: y }) {
+                    this.isCrop = true;
+                    this.down = { x, y };
+                    this.move = { x, y };
+                },
+                cropmove({ pageX, pageY }) {
+                    if (!this.isCrop) return;
+
+                    const { left, top } = this.containerRect;
+
+                    this.move.x = pageX - left;
+                    this.move.y  = pageY - top;
+                },
+                cropend() {
+                    this.isCrop = false;
+                },
+                download() {
+                    const c = document.createElement('canvas');
+                    const ctx = c.getContext('2d');
+                    const img = this.$refs.img;
+                    const { width, height } = img.getBoundingClientRect();
+                    c.width = this.width;
+                    c.height = this.height;
+                    ctx.drawImage(img, this.left, this.top, width, height, 0, 0, width, height);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', c.toDataURL());
+                    link.setAttribute('download', '');
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                }
+            },
+            computed: {
+                container() {
+                    return this.$refs.container;
+                },
+                containerRect() {
+                    return this.container.getBoundingClientRect();
+                },
+                left() {
+                    const { x: dx } = this.down;
+                    const { x: mx } = this.move;
+                    return dx > mx ? mx : dx;
+                },
+                top() {
+                    const { y: dy } = this.down;
+                    const { y: my } = this.move;
+                    return dy > my ? my : dy;
+                },
+                width() {
+                    const { x: dx } = this.down;
+                    const { x: mx } = this.move;
+                    return dx > mx ? dx - mx : mx - dx;
+                },
+                height() {
+                    const { y: dy } = this.down;
+                    const { y: my } = this.move;
+                    return dy > my ? dy - my : my - dy;
+                }
+            },
+            mounted() {
+                document.addEventListener('mousemove', this.cropmove.bind(this));
+                document.addEventListener('mouseup', this.cropend.bind(this));
+            }
+        });
+    </script>
+
+</body>
+</html>
